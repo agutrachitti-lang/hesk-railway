@@ -23,10 +23,10 @@ $hesk_settings['languages']=array(
 );
 
 // --> Database settings
-$hesk_settings['db_host']='localhost';
-$hesk_settings['db_name']='hesk';
-$hesk_settings['db_user']='test';
-$hesk_settings['db_pass']='test';
+$hesk_settings['db_host']='mysql.railway.internal';
+$hesk_settings['db_name']='railway';
+$hesk_settings['db_user']='root';
+$hesk_settings['db_pass']='fvcIFqcYSnHogEeseKPGcIpjgeOompRm';
 $hesk_settings['db_pfix']='hesk_';
 
 
