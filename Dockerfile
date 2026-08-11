@@ -1,25 +1,22 @@
-FROM php:8.1-apache
+FROM php:8.1-cli
 
-# Eliminar completamente los módulos MPM problemáticos
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.conf \
-    && rm -f /etc/apache2/mods-enabled/mpm_event.load \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.conf \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
-    && rm -f /etc/apache2/mods-enabled/mpm_prefork.conf \
-    && rm -f /etc/apache2/mods-enabled/mpm_prefork.load
+# Instalar Apache y PHP
+RUN apt-get update && apt-get install -y \
+    apache2 \
+    libapache2-mod-php \
+    && rm -rf /var/lib/apt/lists/*
 
-# Asegurar solo mpm_prefork
-RUN a2enmod mpm_prefork
+# Instalar extensiones PHP
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Instalar extensiones necesarias
-RUN docker-php-ext-install mysqli pdo pdo_mysql \
-    && docker-php-ext-enable mysqli
-
-# Habilitar mod_rewrite
+# Habilitar módulos de Apache
 RUN a2enmod rewrite
 
 # Configurar Apache
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+# Configurar Apache para servir desde la carpeta correcta
+RUN sed -i 's|/var/www/html|/var/www/html|g' /etc/apache2/sites-available/000-default.conf
 
 # Copiar HESK
 COPY . /var/www/html/
@@ -28,4 +25,8 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
 
+# Exponer puerto
 EXPOSE 80
+
+# Iniciar Apache
+CMD ["apachectl", "-D", "FOREGROUND"]
