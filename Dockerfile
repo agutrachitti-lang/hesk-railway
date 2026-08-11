@@ -1,8 +1,15 @@
 FROM php:8.1-apache
 
-# Solucionar error MPM - deshabilitar otros módulos
-RUN a2dismod mpm_event 2>/dev/null || true
-RUN a2dismod mpm_worker 2>/dev/null || true
+# Eliminar completamente los módulos MPM problemáticos
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.conf \
+    && rm -f /etc/apache2/mods-enabled/mpm_event.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.conf \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_prefork.conf \
+    && rm -f /etc/apache2/mods-enabled/mpm_prefork.load
+
+# Asegurar solo mpm_prefork
+RUN a2enmod mpm_prefork
 
 # Instalar extensiones necesarias
 RUN docker-php-ext-install mysqli pdo pdo_mysql \
