@@ -1008,14 +1008,14 @@ function hesk_mail($to, $cc, $subject, $message, $html_message, $tracking_ID = n
         return false;
     }
 
-try {
-    ob_start();
-    $mailer->send();
-    if (isset($hesk_settings['EMAIL_IDS'])) {
-        $hesk_settings['EMAIL_IDS'][] = $mailer->getLastMessageID();
-    }
-    ob_end_clean();
-} catch (Exception $e) {
+    try {
+        ob_start();
+        $mailer->send();
+        if (isset($hesk_settings['EMAIL_IDS'])) {
+            $hesk_settings['EMAIL_IDS'][] = $mailer->getLastMessageID();
+        }
+        ob_end_clean();
+    } catch (Exception $e) {
         if ($hesk_settings['debug_mode']) {
             $error = $hesklang['cnsm'] . ' ' . $to . '<br /><br />' . $hesklang['error'] . ': ' . htmlspecialchars($mailer->ErrorInfo);
             if ($debug_log = ob_get_contents()) {
@@ -1514,4 +1514,3 @@ function hesk_get_muted_emails() {
 
     return $muted;
 } // END hesk_get_muted_emails()
-
