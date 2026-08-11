@@ -1,25 +1,15 @@
-FROM php:8.1-apache-bullseye
+FROM php:8.1-fpm-bullseye
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
 
-# Instalar extensiones PHP
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Habilitar mod_rewrite
-RUN a2enmod rewrite
-
-# Configurar Apache  
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
-# Copiar HESK
 COPY . /var/www/html/
 
-# Permisos
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+RUN echo 'server { listen 80; server_name _; root /var/www/html; index index.php; location / { try_files $uri $uri/ /index.php?$query_string; } location ~ \.php$ { fastcgi_pass 127.0.0.1:9000; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; include fastcgi_params; } }' > /etc/nginx/sites-available/default
 
-# Puerto
+RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+
 EXPOSE 80
+
+CMD service php8.1-fpm start && nginx -g "daemon off;"
