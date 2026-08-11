@@ -1008,14 +1008,22 @@ function hesk_mail($to, $cc, $subject, $message, $html_message, $tracking_ID = n
         return false;
     }
 
-    try {
-        ob_start();
-        $mailer->send();
-        if (isset($hesk_settings['EMAIL_IDS'])) {
-            $hesk_settings['EMAIL_IDS'][] = $mailer->getLastMessageID();
-        }
-        ob_end_clean();
-    } catch (Exception $e) {
+try {
+    ob_start();
+
+    require_once(HESK_PATH . 'resend_mail.php');
+
+    hesk_resend_send(
+        $to_arr,
+        $cc_arr,
+        $subject,
+        $message,
+        $html_message,
+        $tracking_ID
+    );
+
+    ob_end_clean();
+} catch (Exception $e) {
         if ($hesk_settings['debug_mode']) {
             $error = $hesklang['cnsm'] . ' ' . $to . '<br /><br />' . $hesklang['error'] . ': ' . htmlspecialchars($mailer->ErrorInfo);
             if ($debug_log = ob_get_contents()) {
