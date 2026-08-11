@@ -26,7 +26,7 @@ $hesk_settings['languages']=array(
 $hesk_settings['db_host']='mysql.railway.internal';
 $hesk_settings['db_name']='railway';
 $hesk_settings['db_user']='root';
-$hesk_settings['db_pass']='fvcIFqcYSnHogEeseKPGcIpjgeOompRm';
+$hesk_settings['db_pass']='fvcIFqcYSnHogEeseKPGcIpjgeOompR1';
 $hesk_settings['db_pfix']='hesk_';
 
 
